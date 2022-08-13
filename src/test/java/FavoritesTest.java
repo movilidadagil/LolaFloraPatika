@@ -7,21 +7,21 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pageobjects.HomePage;
-import reportlisteners.ReportListener;
 
 @Slf4j
-@Listeners({GenericListener.class, ReportListener.class})
+@Listeners({GenericListener.class})
 public class FavoritesTest {
     static WebDriver driver;
     HomePage homePage;
     String savedWishTitle = "";
+
     @BeforeClass
     public void setup(){
         driver = DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
         homePage = new HomePage(driver);
     }
 
-    @Test(description = "add wish", dependsOnMethods = "setup")
+    @Test(description = "add wish")
     public void checkAddToWishListSuccessfully(){
         savedWishTitle = homePage.addItemToWishList();
     }

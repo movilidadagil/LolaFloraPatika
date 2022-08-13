@@ -27,9 +27,9 @@ public class GenericListener implements ITestListener, IReporter {
 
     public void onTestStart(ITestResult iTestResult) {
         log.info("onTestStart for "+ iTestResult);
-        test = extent.createTest(iTestResult.getTestName()+" "+
+   /*     test = extent.createTest(iTestResult.getMethod().getMethodName()+" "+
                 iTestResult.getMethod().getDescription(), String.valueOf(iTestResult.getStatus()));
-
+*/
     }
 
     public void onTestSuccess(ITestResult iTestResult) {
@@ -40,28 +40,37 @@ public class GenericListener implements ITestListener, IReporter {
     }
 
     public void onStart(ITestContext iTestContext) {
+        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") +"/test-output/testReport.html");
+
+        //initialize ExtentReports and attach the HtmlReporter
+        extent = new ExtentReports();
+        extent.attachReporter(htmlReporter);
+
         log.info("OnStart for "+ iTestContext);
         log.info(iTestContext.getHost());
         log.info(iTestContext.getName());
         log.info(String.valueOf(iTestContext.getStartDate()));
-        test = extent.createTest(iTestContext.getName()+" "+
-                iTestContext.getStartDate(), String.valueOf(iTestContext.getEndDate())));
-
+      /*  test = extent.createTest(iTestContext.getName()+" "+
+                iTestContext.getStartDate(), String.valueOf(iTestContext.getEndDate()));
+*/
     }
 
     public void onFinish(ITestContext iTestContext) {
         log.info(String.valueOf(iTestContext.getFailedTests()));
+        iTestContext.getFailedTests().getAllMethods().stream()
+                .forEach(i->{
+                    test = extent.createTest(i.getMethodName()+" "+
+                            i.getDescription(), "FAIL");
+
+                });
+
+
 
     }
 
     @Override
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
 
-        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") +"/test-output/testReport.html");
-
-        //initialize ExtentReports and attach the HtmlReporter
-        extent = new ExtentReports();
-        extent.attachReporter(htmlReporter);
 
 
         //configuration items to change the look and feel
@@ -70,7 +79,7 @@ public class GenericListener implements ITestListener, IReporter {
         htmlReporter.config().setDocumentTitle("Simple Automation Report");
         htmlReporter.config().setReportName("Test Report");
         htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP);
-        htmlReporter.config().setTheme(Theme.STANDARD);
+        htmlReporter.config().setTheme(Theme.DARK);
         htmlReporter.config().setTimeStampFormat("EEEE, MMMM dd, yyyy, hh:mm a '('zzz')'");
 
 
