@@ -1,10 +1,16 @@
 import framework.ConfigReader;
 import framework.DriverSetup;
+import loglistener.GenericListener;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pageobjects.HomePage;
+import reportlisteners.ReportListener;
 
+@Slf4j
+@Listeners({GenericListener.class, ReportListener.class})
 public class FavoritesTest {
     static WebDriver driver;
     HomePage homePage;
@@ -15,7 +21,7 @@ public class FavoritesTest {
         homePage = new HomePage(driver);
     }
 
-    @Test(priority = 1)
+    @Test(description = "add wish", dependsOnMethods = "setup")
     public void checkAddToWishListSuccessfully(){
         savedWishTitle = homePage.addItemToWishList();
     }

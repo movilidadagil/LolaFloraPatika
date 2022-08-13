@@ -1,10 +1,12 @@
 package pageobjects;
 
 import framework.Helper;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
+
 
 public class HomePage {
 
@@ -17,6 +19,8 @@ public class HomePage {
     By favorites = By.cssSelector("div[data-tooltip=\"Favorites\"]");
     By titleOfWish = By.xpath("//*/h2[@class='tt-title']");
     By titleOfResWish = By.xpath("//*/h2[@class='tt-title']");
+
+
     public HomePage(WebDriver driver)
     {
         this.driver=driver;
