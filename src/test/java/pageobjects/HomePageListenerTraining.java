@@ -1,17 +1,19 @@
 package pageobjects;
 
 import framework.Helper;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+import static framework.DriverSetup.driver;
 
-public class HomePage {
 
-    WebDriver driver;
+public class HomePageListenerTraining {
+
+
     Helper elementHelper;
+    By profileIcon = By.cssSelector("button[data-tooltip='My account']");
+    By registerSignoutNavi = By.xpath("//div[@class='tt-dropdown-inner']/ul/li[3]/a");
     By searchInput = By.id("search-input");
     By searchIcon = By.cssSelector("button[type=submit]");
     By wishListIcon = By.cssSelector("a[data-tooltip=\"Add to Wishlist\"]");
@@ -21,9 +23,8 @@ public class HomePage {
     By titleOfResWish = By.xpath("//*/h2[@class='tt-title']");
 
 
-    public HomePage(WebDriver driver)
+    public HomePageListenerTraining()
     {
-        this.driver=driver;
         this.elementHelper=new Helper(driver);
     }
 
@@ -36,11 +37,17 @@ public class HomePage {
         return this.elementHelper.findElements(titleOfResWish).get(0).getText();
     }
 
-    public String checkWishInFavorList(){
+    public void checkWishInFavorList(String expectedWish){
         JavascriptExecutor jse = (JavascriptExecutor)driver;
         jse.executeScript("window.scrollBy(0,-250)");
         this.elementHelper.findElement(favorites).click();
-        return this.elementHelper.findElement(titleOfWish).getText();
+        Assert.assertEquals(expectedWish,this.elementHelper.findElement(titleOfWish).getText());
+
     }
+    public void registerNaviSignoutMethod(){
+        this.elementHelper.findElement(profileIcon).click();
+        this.elementHelper.findElement(registerSignoutNavi).click();
+    }
+
 
 }

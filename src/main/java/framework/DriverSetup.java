@@ -14,7 +14,7 @@ public class DriverSetup {
 
     static Map<String, Object> data ;
 
-    static WebDriver driver;
+    public static WebDriver driver;
 
     public static WebDriver initialize_Driver(String browser){
         data = ConfigReader.initialize_Properties();

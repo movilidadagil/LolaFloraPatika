@@ -1,8 +1,9 @@
 import framework.ConfigReader;
 import framework.DriverSetup;
-import loglistener.GenericListener;
+import genericlistener.GenericListener;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -28,6 +29,7 @@ public class FavoritesTest {
 
     @Test(priority = 2)
     public void checkWishList(){
-        homePage.checkWishInFavorList(savedWishTitle);
+        String titleOfWishes = homePage.checkWishInFavorList();
+        Assert.assertEquals(savedWishTitle,titleOfWishes);
     }
 }

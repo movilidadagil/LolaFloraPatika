@@ -24,7 +24,7 @@ public class ReportListener implements IReporter {
     @Override
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
 
-        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") +"/test-output/testReport.html");
+        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") +"/test-output/testReport_.html");
 
         //initialize ExtentReports and attach the HtmlReporter
         extent = new ExtentReports();

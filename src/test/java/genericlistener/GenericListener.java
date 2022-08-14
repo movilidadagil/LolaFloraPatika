@@ -1,19 +1,21 @@
-package loglistener;
+package genericlistener;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.configuration.ChartLocation;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-import com.relevantcodes.extentreports.LogStatus;
+import framework.ConfigReader;
+import framework.DriverSetup;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
 import org.testng.xml.XmlSuite;
+import pageobjects.CreateAnAccount;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class GenericListener implements ITestListener, IReporter {
@@ -26,27 +28,45 @@ public class GenericListener implements ITestListener, IReporter {
     ExtentTest test;
 
     public void onTestStart(ITestResult iTestResult) {
-        log.info("onTestStart for "+ iTestResult);
+        log.info("onTestStart for " + iTestResult);
+        if (iTestResult.getMethod().isBeforeClassConfiguration()) {
+            log.info(iTestResult.getMethod().getMethodName());
+        }
    /*     test = extent.createTest(iTestResult.getMethod().getMethodName()+" "+
                 iTestResult.getMethod().getDescription(), String.valueOf(iTestResult.getStatus()));
 */
     }
 
     public void onTestSuccess(ITestResult iTestResult) {
-        log.info("onTestStartSucces for "+ iTestResult);
-        test = extent.createTest(iTestResult.getTestName()+" "+
+        log.info("onTestStartSucces for " + iTestResult);
+        test = extent.createTest(iTestResult.getTestName() + " " +
                 iTestResult.getMethod().getDescription(), String.valueOf(iTestResult.getStatus()));
+        test.log(Status.PASS,
+                "User with "+CreateAnAccount.getUser().getFirstName() +
+                        " " + CreateAnAccount.getUser().getLastName() +
+                        " " + CreateAnAccount.getUser().getEmail() +
+                        " " + CreateAnAccount.getUser().getPassword()+ " is created" );
 
     }
 
+    public void onTestFailure(ITestResult iTestResult) {
+        log.info("onTestFailure for " + iTestResult);
+        test = extent.createTest(iTestResult.getTestName() + " " +
+                iTestResult.getMethod().getDescription(), String.valueOf(iTestResult.getStatus()));
+        test.log(Status.FAIL, iTestResult.getThrowable());
+    }
+
     public void onStart(ITestContext iTestContext) {
-        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") +"/test-output/testReport.html");
+
+        //DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
+        DriverSetup.driver = DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
+        htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/test-output/testReport2.html");
 
         //initialize ExtentReports and attach the HtmlReporter
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
 
-        log.info("OnStart for "+ iTestContext);
+        log.info("OnStart for " + iTestContext);
         log.info(iTestContext.getHost());
         log.info(iTestContext.getName());
         log.info(String.valueOf(iTestContext.getStartDate()));
@@ -58,19 +78,17 @@ public class GenericListener implements ITestListener, IReporter {
     public void onFinish(ITestContext iTestContext) {
         log.info(String.valueOf(iTestContext.getFailedTests()));
         iTestContext.getFailedTests().getAllMethods().stream()
-                .forEach(i->{
-                    test = extent.createTest(i.getMethodName()+" "+
+                .forEach(i -> {
+                    test = extent.createTest(i.getMethodName() + " " +
                             i.getDescription(), "FAIL");
 
                 });
-
 
 
     }
 
     @Override
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
-
 
 
         //configuration items to change the look and feel
@@ -83,10 +101,8 @@ public class GenericListener implements ITestListener, IReporter {
         htmlReporter.config().setTimeStampFormat("EEEE, MMMM dd, yyyy, hh:mm a '('zzz')'");
 
 
-
         extent.flush();
     }
-
 
 
     private Date getTime(long millis) {
