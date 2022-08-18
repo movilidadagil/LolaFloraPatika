@@ -9,10 +9,14 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import framework.ConfigReader;
 import framework.DriverSetup;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.*;
 import org.testng.xml.XmlSuite;
 import pageobjects.CreateAnAccount;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -57,9 +61,16 @@ public class GenericListener implements ITestListener, IReporter {
     }
 
     public void onStart(ITestContext iTestContext) {
-
+        try {
+            DriverSetup.driver = new RemoteWebDriver(new URL("http:localhost:4444/wd/hub"), DesiredCapabilities.chrome());
+            DriverSetup.driver.manage().window().maximize();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        //DriverSetup.driver.manage().window().maximize();
         //DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
-        DriverSetup.driver = DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
+        //DriverSetup.driver = DriverSetup.initialize_Driver(ConfigReader.initialize_Properties().get("browser").toString());
+        /*
         htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/test-output/testReport2.html");
 
         //initialize ExtentReports and attach the HtmlReporter
@@ -70,6 +81,7 @@ public class GenericListener implements ITestListener, IReporter {
         log.info(iTestContext.getHost());
         log.info(iTestContext.getName());
         log.info(String.valueOf(iTestContext.getStartDate()));
+        */
       /*  test = extent.createTest(iTestContext.getName()+" "+
                 iTestContext.getStartDate(), String.valueOf(iTestContext.getEndDate()));
 */
@@ -93,7 +105,7 @@ public class GenericListener implements ITestListener, IReporter {
 
         //configuration items to change the look and feel
         //add content, manage tests etc
-        htmlReporter.config().setChartVisibilityOnOpen(true);
+        /*htmlReporter.config().setChartVisibilityOnOpen(true);
         htmlReporter.config().setDocumentTitle("Simple Automation Report");
         htmlReporter.config().setReportName("Test Report");
         htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP);
@@ -101,7 +113,7 @@ public class GenericListener implements ITestListener, IReporter {
         htmlReporter.config().setTimeStampFormat("EEEE, MMMM dd, yyyy, hh:mm a '('zzz')'");
 
 
-        extent.flush();
+        extent.flush();*/
     }
 
 
